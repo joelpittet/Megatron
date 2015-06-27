@@ -64,22 +64,22 @@ function megatron_preprocess_search_block_form(&$vars) {
 /**
  * Override or insert variables into the page template for HTML output.
  */
-/*function megatron_process_html(&$variables) {
+function megatron_process_html(&$variables) {
   // Hook into color.module.
   if (module_exists('color')) {
     _color_html_alter($variables);
   }
-}*/
+}
 
 /**
  * Override or insert variables into the page template.
  */
-/*function megatron_process_page(&$variables) {
+function megatron_process_page(&$variables) {
   // Hook into color.module.
   if (module_exists('color')) {
     _color_page_alter($variables);
   }
-}*/
+}
 
 
 /** HTML.TPL.PHP PREPROCESS VARIABLES
@@ -104,33 +104,16 @@ function megatron_preprocess_html(&$vars) {
       $vars['classes_array'][] = drupal_html_class('section-' . megatron_id_safe($section));
       $vars['classes_array'][] = drupal_html_class('path-' . megatron_id_safe($path));
     }
-    // add a body class to tell us what layout we're using
-    //$vars['classes_array'][] = drupal_html_class('layout' . theme_get_setting('clf_layout'));
     // add a body class to tell us what colours we're using
     $vars['classes_array'][] = drupal_html_class('themecolour' . theme_get_setting('clf_clf_theme_new'));
-    
-      
-    //Uses RDFa attributes if the RDF module is enabled
-    //Lifted from Adaptivetheme for D7, full credit to Jeff Burnz
-    // Add rdf info
-    $vars['doctype'] = '<!DOCTYPE html>' . "\n";
-    $vars['rdf'] = new stdClass;
-    $vars['rdf']->version = '';
-    $vars['rdf']->namespaces = '';
-    $vars['rdf']->profile = '';
-
-     if (module_exists('rdf')) {
-       $vars['doctype'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML+RDFa 1.1//EN">' . "\n";
-       $vars['rdf']->version = 'version="HTML+RDFa 1.1"';
-       $vars['rdf']->namespaces = $vars['rdf_namespaces'];
-       $vars['rdf']->profile = ' profile="' . $vars['grddl_profile'] . '"';
-     }
+   
 
      // Add js libraries and scripts
      $clfVerison = theme_get_setting('clf_clf_version');
      $options = array(
        'group' => JS_THEME,
      );
+     
      drupal_add_js('//cdn.ubc.ca/clf/' . $clfVerison . '/js/ubc-clf.min.js', array('type' => 'external', 'group'=>JS_LIBRARY, 'weight' => 0));  
      
      // Add CSS if layout is not default
@@ -143,12 +126,6 @@ function megatron_preprocess_html(&$vars) {
        $vars['classes_array'][] = drupal_html_class('full-width-left');
          
      }
-     /*if ($clfLayout == '__fluid') {
-       drupal_add_css(drupal_get_path('theme','megatron') . '/css/fluid-width.css', array('group' => CSS_THEME, 'every_page' => TRUE));  
-     }
-     if ($clfLayout == '__full') {
-       drupal_add_css(drupal_get_path('theme','megatron') . '/css/full-width.css', array('group' => CSS_THEME, 'every_page' => TRUE));  
-     }*/
   }
 
 
@@ -505,13 +482,34 @@ Implements hook_form_alter().
 ---------------------------------------------------------- */
 function megatron_form_alter(&$form, &$form_state, $form_id) {
   // Customize the search block form
+  
   if ($form_id == 'search_block_form') {
+  	//dpm($form); // print the messages
+  	$form['#attributes']['class'][] = 'form-inline input-append';
     //$form['search_block_form']['#title'] = t('Search'); // Change the text on the label element
     $form['search_block_form']['#attributes']['title'] = t('enter your search terms...');
-    $form['search_block_form']['#attributes']['placeholder'] = t('Enter search terms');
+    $form['search_block_form']['#attributes']['placeholder'] = t('Enter your search terms...');
+    $form['search_block_form']['#attributes']['class'][] = 'nomargin';
+    $form['search_block_form']['#theme_wrappers'] = NULL;
     //$form['search_block_form']['#title_display'] = 'invisible'; // Toggle label visibilty
     //$form['search_block_form']['#size'] = 40;  // define size of the textfield
     //$form['search_block_form']['#default_value'] = t('Search'); // Set a default value for the textfield
+    $form['actions']['#theme_wrappers'] = NULL; // remove the div around the button
+    $form['actions']['submit']['#value'] = t('Go'); // Change the text on the submit button
+    //$form['actions']['submit'] = array('#type' => 'image_button', '#src' => base_path() . path_to_theme() . '/images/search-button.png');
+    
+    // Add extra attributes to the text box
+    //$form['search_block_form']['#attributes']['onblur'] = "if (this.value == '') {this.value = 'Search';}";
+    //$form['search_block_form']['#attributes']['onfocus'] = "if (this.value == 'Search') {this.value = '';}";
+    // Prevent user from searching the default text
+    //$form['#attributes']['onsubmit'] = "if(this.search_block_form.value=='Search'){ alert('Please enter a search'); return false; }";
+  }
+  if ($form_id == 'search_form') {
+  	dpm($form); // print the messages
+  	//$form['#attributes']['class'][] = '';
+    $form['basic']['#attributes']['class'][] = 'form-inline input-append clearfix'; 
+    $form['advanced']['#title'] =  t('Refine your search'); 
+    //$form['advanced']['#type'] =  'accordion'; 
     $form['actions']['submit']['#value'] = t('Go'); // Change the text on the submit button
     //$form['actions']['submit'] = array('#type' => 'image_button', '#src' => base_path() . path_to_theme() . '/images/search-button.png');
     
@@ -523,8 +521,175 @@ function megatron_form_alter(&$form, &$form_state, $form_id) {
   }
 }  
 
+/** Returns HTML for a form element.
+---------------------------------------------------------- */
+function megatron_form_element(&$variables) {
+  $element = &$variables['element'];
+  // This is also used in the installer, pre-database setup.
+  $t = get_t();
+
+  // This function is invoked as theme wrapper, but the rendered form element
+  // may not necessarily have been processed by form_builder().
+  $element += array(
+    '#title_display' => 'before',
+  );
+
+  // Add element #id for #type 'item'.
+  if (isset($element['#markup']) && !empty($element['#id'])) {
+    $attributes['id'] = $element['#id'];
+  }
+
+  // Add bootstrap class
+  $attributes['class'] = array('control-group');
+
+  // Check for errors and set correct error class
+  if (isset($element['#parents']) && form_get_error($element)) {
+    $attributes['class'][] = 'error';
+  }
+
+  if (!empty($element['#type'])) {
+    $attributes['class'][] = 'form-type-' . strtr($element['#type'], '_', '-');
+  }
+  if (!empty($element['#name'])) {
+    $attributes['class'][] = 'form-item-' . strtr($element['#name'], array(' ' => '-', '_' => '-', '[' => '-', ']' => ''));
+  }
+  // Add a class for disabled elements to facilitate cross-browser styling.
+  if (!empty($element['#attributes']['disabled'])) {
+    $attributes['class'][] = 'form-disabled';
+  }
+  $output = '<div' . drupal_attributes($attributes) . '>' . "\n";
+
+  // If #title is not set, we don't display any label or required marker.
+  if (!isset($element['#title'])) {
+    $element['#title_display'] = 'none';
+  }
+  $prefix = isset($element['#field_prefix']) ? '<span class="field-prefix">' . $element['#field_prefix'] . '</span> ' : '';
+  $suffix = isset($element['#field_suffix']) ? ' <span class="field-suffix">' . $element['#field_suffix'] . '</span>' : '';
+
+  switch ($element['#title_display']) {
+    case 'before':
+    case 'invisible':
+      $output .= ' ' . theme('form_element_label', $variables);
+      $output .= '<div class="controls">';
+      $output .= ' ' . $prefix . $element['#children'] . $suffix . "\n";
+      break;
+
+    case 'after':
+      $output .= '<div class="controls">';
+      $variables['#children'] = ' ' . $prefix . $element['#children'] . $suffix;
+      $output .= ' ' . theme('form_element_label', $variables) . "\n";
+      break;
+
+    case 'none':
+    case 'attribute':
+      // Output no label and no required marker, only the children.
+      $output .= '<div class="controls">';
+      $output .= ' ' . $prefix . $element['#children'] . $suffix . "\n";
+      break;
+  }
+
+  if ( !empty($element['#description']) ) {
+    $output .= '<p class="help-block">' . $element['#description'] . "</p>\n";
+  }
+
+  $output .= "</div></div>\n";
+
+  return $output;
+}
+
+/** Returns HTML for a form element label and required marker.
+---------------------------------------------------------- */
+function megatron_form_element_label(&$variables) {
+  $element = $variables['element'];
+  // This is also used in the installer, pre-database setup.
+  $t = get_t();
+
+  // If title and required marker are both empty, output no label.
+  if ((!isset($element['#title']) || $element['#title'] === '') && empty($element['#required'])) {
+    return '';
+  }
+
+  // If the element is required, a required marker is appended to the label.
+  $required = !empty($element['#required']) ? theme('form_required_marker', array('element' => $element)) : '';
+
+  $title = filter_xss_admin($element['#title']);
+
+  $attributes = array();
+  // Style the label as class option to display inline with the element.
+  if ($element['#title_display'] == 'after') {
+    $attributes['class'][] = 'option';
+    $attributes['class'][] = $element['#type'];
+  }
+  // Show label only to screen readers to avoid disruption in visual flows.
+  elseif ($element['#title_display'] == 'invisible') {
+    $attributes['class'][] = 'element-invisible';
+  }
+
+  if (!empty($element['#id'])) {
+    $attributes['for'] = $element['#id'];
+  }
+
+  // @Bootstrap: Add Bootstrap control-label class.
+  $attributes['class'][] = 'control-label';
+
+  // @Bootstrap: Insert radio and checkboxes inside label elements.
+  $output = '';
+  if ( isset($variables['#children']) ) {
+    $output .= $variables['#children'];
+  }
+
+  // @Bootstrap: Append label
+  $output .= $t('!title !required', array('!title' => $title, '!required' => $required));
+
+  // The leading whitespace helps visually separate fields from inline labels.
+  return ' <label' . drupal_attributes($attributes) . '>' . $output . "</label>\n";
+}
+
+
 /** BUTTONS
-Implements theme_button().
+---------------------------------------------------------- */
+
+/** Preprocessor for theme('button').
+---------------------------------------------------------- */
+function megatron_preprocess_button(&$vars) {
+  $vars['element']['#attributes']['class'][] = 'btn';
+
+  if (isset($vars['element']['#value'])) {
+    $classes = array(
+      //specifics
+      t('Save and add') => 'btn-info',
+      t('Add another item') => 'btn-info',
+      t('Add effect') => 'btn-primary',
+      t('Add and configure') => 'btn-primary',
+      t('Update style') => 'btn-primary',
+      t('Download feature') => 'btn-primary',
+
+      //generals
+      t('Save') => 'btn-primary',
+      t('Apply') => 'btn-primary',
+      t('Create') => 'btn-primary',
+      t('Confirm') => 'btn-primary',
+      t('Submit') => 'btn-secondary',
+      t('Export') => 'btn-primary',
+      t('Import') => 'btn-primary',
+      t('Restore') => 'btn-primary',
+      t('Rebuild') => 'btn-primary',
+      t('Search') => 'btn-secondary',
+      t('Add') => 'btn-info',
+      t('Update') => 'btn-info',
+      t('Delete') => 'btn-danger',
+      t('Remove') => 'btn-danger',
+    );
+    foreach ($classes as $search => $class) {
+      if (strpos($vars['element']['#value'], $search) !== FALSE) {
+        $vars['element']['#attributes']['class'][] = $class;
+        break;
+      }
+    }
+  }
+}
+
+/** Implements theme_button().
 ---------------------------------------------------------- */
 function megatron_button($variables) {
   $element = $variables['element'];
@@ -537,10 +702,11 @@ function megatron_button($variables) {
   }
   // Add a btn-primary class if submit button.
   if (isset($element['#parents']) && ($element['#parents'][0] == 'submit')) {
-    $element['#attributes']['class'][] = 'btn-primary';
+    $element['#attributes']['class'][] = 'btn-secondary';
   }
  return '<input' . drupal_attributes($element['#attributes']) . ' />';
 }
+
 
 /** PAGER */
 // REMOVED AS WAS CAUSING VIEWS AJAX FORM ERROR - JOTOOLE - NOV7/13
@@ -749,18 +915,19 @@ Replace jQuery with updated version
 ---------------------------------------------------------- */
 function megatron_js_alter(&$javascript) {
   // Swap out jQuery to use an external version of the library (a requirement of the Twitter Bootstrap framework).
-  $clf_jqueryoption = theme_get_setting('clf_jqueryoption');
-  //if (!empty($clfLayout)) {
-  if (empty($clf_jqueryoption)) {
-    $javascript['misc/jquery.js']['data'] = '//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js';
-    $javascript['misc/jquery.js']['type'] = 'external';
-    $javascript['misc/jquery.js']['version'] = '1.8.1'; 
+  //$clf_jqueryoption = theme_get_setting('clf_jqueryoption');
+  //if (empty($clf_jqueryoption)) {
+  if (module_exists('jquery_update')) {
+        
   }
-  
-  //if (isset($javascript['misc/jquery.form.js'])) {
-  //  $javascript['misc/jquery.form.js']['data'] = path_to_theme() . '/js/lib/jquery.form.js';
-  //  $javascript['misc/jquery.form.js']['version'] = '3.27.0';
-  //}
+  else {
+  	$javascript['misc/jquery.js']['data'] = '//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js';
+  	$javascript['misc/jquery.js']['type'] = 'external';
+  	$javascript['misc/jquery.js']['group'] = JS_LIBRARY; 
+  	$javascript['misc/jquery.js']['weight'] = -100; 
+  	//$javascript['misc/jquery.js']['scope'] = 'footer'; 
+  	$javascript['misc/jquery.js']['version'] = '1.8.1'; 
+  }
 }
 
 

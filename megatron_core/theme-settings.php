@@ -41,11 +41,11 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
     '#weight' => -8,
   );
 
-  $form['clf_theme']['clf_clf_theme_new'] = array(
+  $form['clf_theme']['clf_colour'] = array(
     '#type' => 'select',
     '#title' => t('CLF Colour Scheme'),
     '#description' => t('View <a href="http://clf.ubc.ca/design-specifications/">colour theme options</a> and design specifications.'),
-    '#default_value' => theme_get_setting('clf_clf_theme_new'),
+    '#default_value' => theme_get_setting('clf_colour'),
     '#options' => array(
       '' => t('White on Blue'),
       '-wg' => t('White on Grey'),
@@ -54,7 +54,7 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
     ),
   );
   
-  $form['clf_theme']['clf_clf_version'] = array(
+  $form['clf_theme']['clf_version'] = array(
     '#type' => 'select',
     '#title' => t('CLF Version'),
     '#description' => t('Select the release version of the CLF you\'d like to use.'),
@@ -66,21 +66,10 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
     ),
   );
   
-  $form['clf_theme']['clf_clf_package'] = array(
-    '#type' => 'select',
-    '#title' => t('CLF Package'),
-    '#description' => t('Select the package of the CLF you\'d like to use.<br /><br />Choosing a minimal version will exclude many of the default CLF styles, but may be preferable for themes with a large number of customizations. <em>Note: Minimal package is only currently available for CLF version 7.0.2</em>'),
-    '#default_value' => theme_get_setting('clf_clf_package'),
-    '#options' => array(
-      'full' => t('Full Version'),
-      'min' => t('Minimal Version'),
-    ),
-  );
-  
   $form['clf_theme']['clf_layout'] = array(
     '#type' => 'select', 
     '#title' => t('Layout'), 
-    '#description' => t('Make the CLF Full Width'),
+    '#description' => t('Make the CLF Full Width or Fixed width'),
     '#default_value' => theme_get_setting('clf_layout'),
     '#options' => array(
      '' => t('Default'),
@@ -96,23 +85,6 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
     '#default_value' => theme_get_setting('clf_navoption'),
 );
 
-  $form['clf_theme']['clf_jqueryoption'] = array(
-    '#type' => 'checkbox', 
-    '#title' => t('Do not load updated jQuery (1.8.x) from theme'),
-    '#description' => t('If you would like to use a module such as jQuery Update, you can enable this option to prevent jQuery from loading with the theme.<br /><br />Please note that jQuery version 1.8+ is required for the CLF.'),
-    '#default_value' => theme_get_setting('clf_jqueryoption'),
-);
-
-  $form['clf_theme']['clf_scriptsoption'] = array(
-    '#type' => 'select', 
-    '#title' => t('Script Location'),
-    '#description' => t('Include scripts in the page head or footer'),
-    '#default_value' => theme_get_setting('clf_scriptsoption'),
-    '#options' => array(
-      'footer' => t('Footer'),
-      'head' => t('Head'),
-    ),
-);
   
   /** CLF CAMPUS IDENTITY OPTIONS
   ---------------------------------------------------------- */
@@ -179,7 +151,7 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
   $form['clf_unit_info']['clf_unitname'] = array(
     '#type' => 'textfield', 
     '#title' => t('This field will populate the <a href="http://clf.ubc.ca/parts-of-the-clf/#unit-name" title="View the location of the Unit Name" target="_blank">Unit Name</a> in the header and the <a href="http://clf.ubc.ca/parts-of-the-clf/#unit-sub-footer" title="View the location of the Unit Sub Footer" target="_blank">Unit Sub Footer</a>. '), 
-    '#default_value' => theme_get_setting('clf_unitname'), 
+    '#default_value' => theme_get_setting('clf_unitname'),
     '#size' => 60, 
     '#maxlength' => 128,
     '#required' => true,
@@ -195,6 +167,12 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
       '#suffix' => '</div>',
       '#default_value' => theme_get_setting('colourpicker'),
   );
+  
+  $form['clf_unit_info']['uglybg'] = array(
+    '#type' => 'checkbox', 
+    '#title' => t('Show the gradient behind Unit Name?'),
+    '#default_value' => theme_get_setting('uglybg'),
+  );
  
   $form['clf_unit_info']['breadcrumb_display'] = array(
    '#type' => 'select',
@@ -207,9 +185,6 @@ function megatron_form_system_theme_settings_alter(&$form, &$form_state) {
    ),
   );
 
-/*  $form['clf_general']['clf_unitinfohelp'] = array('#type' => 'markup', '#value' => '<p>Fill in your unit\'s information here.  Only the unit name field is required.  The field values are used to generate a <a href="http://microformats.org/wiki/hcard" target="_blank">microformats hCard</a> in the CLF footer.</p>');
-
-*/
   $form['clf_unit_info']['custom_signature'] = array(
    '#type' => 'checkbox', 
    '#title' => t('Custom Signature Display Option'),
