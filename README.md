@@ -15,16 +15,17 @@ New features include:
 - subtheme creation with Drush 
 - better javascript handling
 
-Removed - RDF support
+Removed:
+- RDF support
 
 SUBTHEME CREATION VIA DRUSH
 _________________
 
 Ensure Megatron is enabled and set to be the default:
-	drush en megatron -y
-	drush vset theme_default megatron
-	drush megatron "My Subtheme Name" my_subtheme_name
-	drush vset theme_default my_subtheme_name
+- drush en megatron -y
+- drush vset theme_default megatron
+- drush megatron "My Subtheme Name" my_subtheme_name
+- drush vset theme_default my_subtheme_name
 
 This will create a subtheme of Megatron in the directory themes/my-subtheme-name and set it to the default theme
 
