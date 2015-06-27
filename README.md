@@ -14,7 +14,7 @@ New features include:
 - included child theme
 - subtheme creation with Drush 
 - better javascript handling
----
+
 Removed - RDF support
 
 SUBTHEME CREATION VIA DRUSH
