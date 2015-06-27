@@ -1,6 +1,9 @@
 Project.espressostorage
 Megatron - PUBLIC.esproj
 megatron-public.esproj
+*.esproj
+*.espressostorage
+*.codekit
 user.jim.espressostorage
 bootstrap/
 clf/
