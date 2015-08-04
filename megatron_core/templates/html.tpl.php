@@ -65,7 +65,7 @@
   <link href="//cdn.ubc.ca/clf/<?php print theme_get_setting('clf_clf_version'); ?>/css/ubc-clf-full<?php print theme_get_setting('clf_colour'); ?>.min.css" rel="stylesheet">
   <?php print $styles; ?>
   <?php print $scripts; ?>
-  <script src="<?php print base_path() . path_to_theme();?>/js/lib/modernizr.custom.2.6.2.js"></script>
+  <script src="<?php print base_path() . drupal_get_path('theme', 'megatron');?>/js/lib/modernizr.custom.2.6.2.js"></script>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
   <?php print $page_top; ?>
