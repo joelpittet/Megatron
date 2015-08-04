@@ -14,3 +14,4 @@ __page--fluid.tpl.php
 unused/
 bower.json
 package.json
+*.espressostorage
