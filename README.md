@@ -23,10 +23,13 @@ _________________
 
 Ensure Megatron is enabled:
 - drush en megatron -y
+
 Set Megatron to be the default:
 - drush vset theme_default megatron
+
 Create a subtheme of Megatron in the directory themes/my-subtheme-name:
 - drush megatron "My Subtheme Name" my_subtheme_name
+
 Make your new subtheme the default theme:
 - drush vset theme_default my_subtheme_name
 
