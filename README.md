@@ -21,13 +21,15 @@ Removed:
 SUBTHEME CREATION VIA DRUSH
 _________________
 
-Ensure Megatron is enabled and set to be the default:
+Ensure Megatron is enabled:
 - drush en megatron -y
+Set Megatron to be the default:
 - drush vset theme_default megatron
+Create a subtheme of Megatron in the directory themes/my-subtheme-name:
 - drush megatron "My Subtheme Name" my_subtheme_name
+Make your new subtheme the default theme:
 - drush vset theme_default my_subtheme_name
 
-This will create a subtheme of Megatron in the directory themes/my-subtheme-name and set it to the default theme
 
 UBC CLF 7.0 DRUPAL THEME FEATURES
 _________________
@@ -55,10 +57,10 @@ chown -R root:apache ubc_clf_drupal_template_7.0.2
 RECOMMENDED MODULES
 ___________________
 
-- Picture + Breakpoints - for assigning alternate image styles to Media Query breakpoints 
-- Media - for inserting adaptive images into textarea fields (allows you to choose image style per image)
+- Picture + Breakpoints - for assigning alternate image styles to Media Query breakpoints and inserting 
+- CKEditor - the default editor in Drupal 8
 - Block Class - allows you to easily use ‘visible-phone / visible-tablet / visible-desktop’ type bootstrap styles on blocks of content
-- jquery update
+- jQuery Update
 
 
 MODULES NOT RECOMMENDED
