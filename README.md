@@ -18,7 +18,7 @@ New features include:
 Removed:
 - RDF support
 
-SUBTHEME CREATION VIA DRUSH
+**SUBTHEME CREATION VIA DRUSH**
 _________________
 
 Ensure Megatron is enabled:
@@ -34,7 +34,7 @@ Make your new subtheme the default theme:
 - drush vset theme_default my_subtheme_name
 
 
-UBC CLF 7.0 DRUPAL THEME FEATURES
+**UBC CLF 7.0 DRUPAL THEME FEATURES**
 _________________
 
 Bootstrap / CLF:
@@ -57,7 +57,7 @@ Usage:
 chown -R root:apache ubc_clf_drupal_template_7.0.2
 - login to your Drupal website as admin --> Appearance --> Enable and Set as Default for UBC-CLF
 
-RECOMMENDED MODULES
+**RECOMMENDED MODULES**
 ___________________
 
 - Picture + Breakpoints - for assigning alternate image styles to Media Query breakpoints and inserting 
@@ -66,7 +66,7 @@ ___________________
 - jQuery Update
 
 
-MODULES NOT RECOMMENDED
+**MODULES NOT RECOMMENDED**
 _______________________
 
 - Environment Indicator - breaks in jQuery versions 1.8+
